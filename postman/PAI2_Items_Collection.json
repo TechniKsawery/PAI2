@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "PAI2 - Moduł Zasobów",
+    "description": "Kolekcja Postman dla modułu zasobów (items) w projekcie PAI2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Utwórz nowy przedmiot",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Przykładowy przedmiot\",\n    \"description\": \"To jest przykładowy opis przedmiotu\",\n    \"price\": 99.99\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/items",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "items"]
+        },
+        "description": "Endpoint do tworzenia nowego przedmiotu"
+      }
+    },
+    {
+      "name": "Pobierz wszystkie przedmioty",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/items",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "items"]
+        },
+        "description": "Endpoint do pobierania wszystkich przedmiotów"
+      }
+    },
+    {
+      "name": "Pobierz pojedynczy przedmiot",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/items/:id",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "items", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "przykładowe_id",
+              "description": "ID przedmiotu"
+            }
+          ]
+        },
+        "description": "Endpoint do pobierania pojedynczego przedmiotu"
+      }
+    },
+    {
+      "name": "Aktualizuj przedmiot",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Zaktualizowany przedmiot\",\n    \"description\": \"To jest zaktualizowany opis przedmiotu\",\n    \"price\": 149.99\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/items/:id",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "items", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "przykładowe_id",
+              "description": "ID przedmiotu do aktualizacji"
+            }
+          ]
+        },
+        "description": "Endpoint do aktualizacji przedmiotu"
+      }
+    },
+    {
+      "name": "Usuń przedmiot",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/items/:id",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "items", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "przykładowe_id",
+              "description": "ID przedmiotu do usunięcia"
+            }
+          ]
+        },
+        "description": "Endpoint do usuwania przedmiotu"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001",
+      "type": "string"
+    }
+  ]
+} 
