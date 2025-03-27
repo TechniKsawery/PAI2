@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import { Express } from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
@@ -38,12 +38,12 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Routes
-app.use('/api-docs', swaggerUi.serve);
+app.use('/api-docs', swaggerUi.serve as unknown as RequestHandler);
 app.get('/api-docs', swaggerUi.setup(swaggerSpec));
 app.use("/api/items", itemRoutes);
 
 // Error handling middleware
-app.use(errorHandler);
+app.use(errorHandler as unknown as RequestHandler);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Serwer działa na porcie ${PORT}`));
