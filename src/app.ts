@@ -13,10 +13,8 @@ connectDB();
 
 const app: Express = express();
 
-// Middleware
 app.use(express.json());
 
-// Swagger configuration
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -37,12 +35,10 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-// Routes
 app.use('/api-docs', swaggerUi.serve as unknown as RequestHandler);
 app.get('/api-docs', swaggerUi.setup(swaggerSpec));
 app.use("/api/items", itemRoutes);
 
-// Error handling middleware
 app.use(errorHandler as unknown as RequestHandler);
 
 const PORT = process.env.PORT || 5001;

@@ -3,9 +3,6 @@ import { RequestHandler } from 'express';
 import Item from '../models/itemModel';
 import { AppError } from '../middleware/errorHandler';
 
-// @desc    Utwórz nowy przedmiot
-// @route   POST /api/items
-// @access  Public
 export const createItem: RequestHandler = async (req, res, next) => {
   try {
     const item = await Item.create(req.body);
@@ -18,9 +15,6 @@ export const createItem: RequestHandler = async (req, res, next) => {
   }
 };
 
-// @desc    Pobierz wszystkie przedmioty
-// @route   GET /api/items
-// @access  Public
 export const getItems: RequestHandler = async (req, res, next) => {
   try {
     const items = await Item.find();
@@ -34,9 +28,6 @@ export const getItems: RequestHandler = async (req, res, next) => {
   }
 };
 
-// @desc    Pobierz pojedynczy przedmiot
-// @route   GET /api/items/:id
-// @access  Public
 export const getItem: RequestHandler = async (req, res, next) => {
   try {
     const item = await Item.findById(req.params.id);
@@ -52,9 +43,6 @@ export const getItem: RequestHandler = async (req, res, next) => {
   }
 };
 
-// @desc    Aktualizuj przedmiot
-// @route   PUT /api/items/:id
-// @access  Public
 export const updateItem: RequestHandler = async (req, res, next) => {
   try {
     const item = await Item.findByIdAndUpdate(
@@ -74,9 +62,6 @@ export const updateItem: RequestHandler = async (req, res, next) => {
   }
 };
 
-// @desc    Usuń przedmiot
-// @route   DELETE /api/items/:id
-// @access  Public
 export const deleteItem: RequestHandler = async (req, res, next) => {
   try {
     const item = await Item.findByIdAndDelete(req.params.id);
@@ -90,4 +75,4 @@ export const deleteItem: RequestHandler = async (req, res, next) => {
   } catch (error) {
     next(new AppError('Błąd podczas usuwania przedmiotu', 500));
   }
-}; 
+};
