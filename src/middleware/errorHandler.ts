@@ -29,7 +29,6 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
-  // Dla nieznanych błędów
   console.error('ERROR 💥', err);
   res.status(500).json({
     status: 'error',
