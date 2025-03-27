@@ -1,7 +1,6 @@
 import express from 'express';
 import { createItem, getItems, getItem, updateItem, deleteItem } from '../controllers/itemController';
-import { validateRequest } from '../middleware/validateRequest';
-import { createItemSchema, updateItemSchema } from '../validators/itemValidators';
+import { validateItem } from '../validation/itemsValidation';
 
 const router = express.Router();
 
@@ -37,7 +36,7 @@ const router = express.Router();
  *       400:
  *         description: Nieprawidłowe dane wejściowe
  */
-router.post('/', validateRequest(createItemSchema), createItem);
+router.post('/', validateItem, createItem);
 
 /**
  * @swagger
@@ -107,7 +106,7 @@ router.get('/:id', getItem);
  *       400:
  *         description: Nieprawidłowe dane wejściowe
  */
-router.put('/:id', validateRequest(updateItemSchema), updateItem);
+router.put('/:id', validateItem, updateItem);
 
 /**
  * @swagger
