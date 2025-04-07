@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IItem extends Document {
+// Interfejs przedmiotu
+export interface IItem extends mongoose.Document {
   id: number;
   name: string;
   description: string;
@@ -9,37 +10,19 @@ export interface IItem extends Document {
   updatedAt: Date;
 }
 
-const itemSchema = new Schema({
-  id: {
-    type: Number,
-    required: true,
-    unique: true,
-    index: true
-  },
-  name: {
-    type: String,
-    required: [true, 'Nazwa jest wymagana'],
-    trim: true
-  },
-  description: {
-    type: String,
-    required: [true, 'Opis jest wymagany'],
-    trim: true
-  },
-  price: {
-    type: Number,
-    required: [true, 'Cena jest wymagana'],
-    min: [0, 'Cena nie może być ujemna']
-  }
+// Schemat przedmiotu
+const itemSchema = new mongoose.Schema({
+  id: { type: Number, required: true, unique: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  price: { type: Number, required: true, min: 0 }
 }, {
-  timestamps: true,
-  toJSON: { virtuals: false },
-  toObject: { virtuals: false }
+  timestamps: true
 });
 
-// Ustaw nasze własne ID jako główny identyfikator
+// Usuwanie niepotrzebnych pól z JSON
 itemSchema.set('toJSON', {
-  transform: function(doc, ret, options) {
+  transform: function(doc, ret) {
     ret.id = ret.id;
     delete ret._id;
     delete ret.__v;
@@ -47,4 +30,5 @@ itemSchema.set('toJSON', {
   }
 });
 
-export default mongoose.model<IItem>('Item', itemSchema); 
+const Item = mongoose.model<IItem>('Item', itemSchema);
+export default Item; 
