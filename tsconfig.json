@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "target": "ES2020",
+    "target": "es2016",
     "module": "commonjs",
-    "moduleResolution": "node",
     "outDir": "./dist",
-    "skipLibCheck": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": false,
+    "skipLibCheck": true,
     "noImplicitAny": false,
-    "rootDir": "./src"
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "my-api-gr-1/src/**/*"]
 }

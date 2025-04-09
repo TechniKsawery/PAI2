@@ -1,100 +1,80 @@
-import { Request, Response, NextFunction } from 'express';
-import { RequestHandler } from 'express';
 import Item from '../models/itemModel';
-import { AppError } from '../middleware/errorHandler';
 
-export const createItem: RequestHandler = async (req, res, next) => {
-  try {
-    console.log('1. Otrzymane dane:', JSON.stringify(req.body, null, 2));
-    
-    const lastItem = await Item.findOne().sort({ id: -1 });
-    console.log('2. Ostatni przedmiot:', lastItem ? JSON.stringify(lastItem, null, 2) : 'Brak');
-    
-    const nextId = lastItem && typeof lastItem.id === 'number' ? lastItem.id + 1 : 1;
-    console.log('3. Następne ID:', nextId);
-    
-    const newItem = {
-      ...req.body,
-      id: nextId
-    };
-    console.log('4. Nowy przedmiot do utworzenia:', JSON.stringify(newItem, null, 2));
-    
-    try {
-      const item = await Item.create(newItem);
-      console.log('5. Utworzony przedmiot:', JSON.stringify(item, null, 2));
-      
-      res.status(201).json({
-        status: 'success',
-        data: item
-      });
-    } catch (createError) {
-      console.error('6. Błąd podczas tworzenia w bazie:', createError);
-      throw createError;
-    }
-  } catch (error) {
-    console.error('7. Błąd główny:', error);
-    next(new AppError('Błąd podczas tworzenia przedmiotu', 400));
-  }
-};
-
-export const getItems: RequestHandler = async (req, res, next) => {
+// Pobierz wszystkie przedmioty
+export const getItems = async (req: any, res: any) => {
   try {
     const items = await Item.find().sort({ id: 1 });
-    res.status(200).json({
-      status: 'success',
-      results: items.length,
-      data: items
-    });
+    res.json(items);
   } catch (error) {
-    next(new AppError('Błąd podczas pobierania przedmiotów', 500));
+    res.status(500).json({ error: 'Błąd podczas pobierania przedmiotów' });
   }
 };
 
-export const getItem: RequestHandler = async (req, res, next) => {
+// Pobierz pojedynczy przedmiot
+export const getItem = async (req: any, res: any) => {
   try {
     const item = await Item.findOne({ id: parseInt(req.params.id) });
     if (!item) {
-      return next(new AppError('Przedmiot nie został znaleziony', 404));
+      return res.status(404).json({ error: 'Przedmiot nie znaleziony' });
     }
-    res.status(200).json({
-      status: 'success',
-      data: item
-    });
+    res.json(item);
   } catch (error) {
-    next(new AppError('Błąd podczas pobierania przedmiotu', 500));
+    res.status(500).json({ error: 'Błąd podczas pobierania przedmiotu' });
   }
 };
 
-export const updateItem: RequestHandler = async (req, res, next) => {
+// Utwórz nowy przedmiot
+export const createItem = async (req: any, res: any) => {
+  try {
+    const lastItem = await Item.findOne().sort({ id: -1 });
+    const nextId = lastItem ? lastItem.id + 1 : 1;
+
+    const item = new Item({
+      id: nextId,
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price
+    });
+
+    await item.save();
+    res.status(201).json(item);
+  } catch (error) {
+    res.status(500).json({ error: 'Błąd podczas tworzenia przedmiotu' });
+  }
+};
+
+// Aktualizuj przedmiot
+export const updateItem = async (req: any, res: any) => {
   try {
     const item = await Item.findOneAndUpdate(
       { id: parseInt(req.params.id) },
-      req.body,
-      { new: true, runValidators: true }
+      {
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price
+      },
+      { new: true }
     );
+
     if (!item) {
-      return next(new AppError('Przedmiot nie został znaleziony', 404));
+      return res.status(404).json({ error: 'Przedmiot nie znaleziony' });
     }
-    res.status(200).json({
-      status: 'success',
-      data: item
-    });
+
+    res.json(item);
   } catch (error) {
-    next(new AppError('Błąd podczas aktualizacji przedmiotu', 400));
+    res.status(500).json({ error: 'Błąd podczas aktualizacji przedmiotu' });
   }
 };
 
-export const deleteItem: RequestHandler = async (req, res, next) => {
+// Usuń przedmiot
+export const deleteItem = async (req: any, res: any) => {
   try {
     const item = await Item.findOneAndDelete({ id: parseInt(req.params.id) });
     if (!item) {
-      return next(new AppError('Przedmiot nie został znaleziony', 404));
+      return res.status(404).json({ error: 'Przedmiot nie znaleziony' });
     }
-    res.status(200).json({
-      status: 'success',
-      data: null
-    });
+    res.json({ message: 'Przedmiot usunięty' });
   } catch (error) {
-    next(new AppError('Błąd podczas usuwania przedmiotu', 500));
+    res.status(500).json({ error: 'Błąd podczas usuwania przedmiotu' });
   }
 };
