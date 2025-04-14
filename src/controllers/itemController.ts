@@ -1,6 +1,6 @@
 import Item from '../models/itemModel';
 
-// Pobierz wszystkie przedmioty
+
 export const getItems = async (req: any, res: any) => {
   try {
     const items = await Item.find().sort({ id: 1 });
@@ -10,7 +10,7 @@ export const getItems = async (req: any, res: any) => {
   }
 };
 
-// Pobierz pojedynczy przedmiot
+
 export const getItem = async (req: any, res: any) => {
   try {
     const item = await Item.findOne({ id: parseInt(req.params.id) });
@@ -23,7 +23,7 @@ export const getItem = async (req: any, res: any) => {
   }
 };
 
-// Utwórz nowy przedmiot
+
 export const createItem = async (req: any, res: any) => {
   try {
     const lastItem = await Item.findOne().sort({ id: -1 });
@@ -43,7 +43,7 @@ export const createItem = async (req: any, res: any) => {
   }
 };
 
-// Aktualizuj przedmiot
+
 export const updateItem = async (req: any, res: any) => {
   try {
     const item = await Item.findOneAndUpdate(
@@ -66,7 +66,7 @@ export const updateItem = async (req: any, res: any) => {
   }
 };
 
-// Usuń przedmiot
+
 export const deleteItem = async (req: any, res: any) => {
   try {
     const item = await Item.findOneAndDelete({ id: parseInt(req.params.id) });

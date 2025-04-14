@@ -10,7 +10,7 @@ import {
 
 const router = Router();
 
-// Ścieżki dla przedmiotów
+
 router.get('/', getItems);
 router.post('/', validateItem, validateItemMiddleware, createItem);
 router.get('/:id', getItem);

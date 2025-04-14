@@ -18,9 +18,9 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(logMiddleware); // Dodajemy middleware kolegi
+app.use(logMiddleware); 
 
-// Konfiguracja Swagger
+
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -39,20 +39,20 @@ const swaggerOptions = {
   apis: ['./src/routes/*.ts', '../my-api-gr-1/src/**/*.ts']
 };
 
-// Dodanie dokumentacji Swagger
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Dodanie ścieżek
+
 app.use('/api/items', itemRoutes);
 
-// Ścieżki kolegi
+
 app.use('/api/products', productsController);
 app.use('/api/todos', todosController);
 
-// Obsługa błędów
+
 app.use(errorHandler);
 
-// Uruchomienie serwera
+
 const PORT = process.env.PORT || 5001;
 connectDB().then(() => {
   app.listen(PORT, () => {

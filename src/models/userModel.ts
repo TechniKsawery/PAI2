@@ -32,7 +32,7 @@ const userSchema = new Schema({
   timestamps: true
 });
 
-// Hash hasła przed zapisem
+
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
@@ -45,7 +45,7 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Metoda do porównywania haseł
+
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };
