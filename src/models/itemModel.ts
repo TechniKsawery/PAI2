@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-// Interfejs przedmiotu
+
 export interface IItem extends mongoose.Document {
   id: number;
   name: string;
@@ -10,7 +10,7 @@ export interface IItem extends mongoose.Document {
   updatedAt: Date;
 }
 
-// Schemat przedmiotu
+
 const itemSchema = new mongoose.Schema({
   id: { type: Number, required: true, unique: true },
   name: { type: String, required: true },
@@ -20,7 +20,7 @@ const itemSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Usuwanie niepotrzebnych pól z JSON
+
 itemSchema.set('toJSON', {
   transform: function(doc, ret) {
     ret.id = ret.id;
