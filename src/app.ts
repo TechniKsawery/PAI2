@@ -10,7 +10,7 @@ import { logMiddleware } from './middleware/logger';
 import dotenv from 'dotenv';
 
 // Importy z przeniesionych modułów
-import { productsController } from './product/controllers/products.controller';
+import { personsController } from './controllers/personsController';
 import { todosController } from './todo/controllers/todos.controller';
 
 dotenv.config();
@@ -26,7 +26,7 @@ const swaggerOptions = {
     info: {
       title: 'PAI2 API',
       version: '1.0.0',
-      description: 'API do zarządzania przedmiotami i produktami'
+      description: 'API do zarządzania przedmiotami i osobami'
     },
     servers: [
       {
@@ -41,7 +41,7 @@ const swaggerOptions = {
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/items', itemRoutes);
-app.use('/api/products', productsController);
+app.use('/api/persons', personsController);
 app.use('/api/todos', todosController);
 
 app.use(errorHandler);
