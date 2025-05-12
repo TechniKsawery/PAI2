@@ -15,7 +15,7 @@ const swaggerOptions = {
       }
     ]
   },
-  apis: ['./src/routes/*.ts', '../my-api-gr-1/src/**/*.ts']
+  apis: ['./src/routes/*.ts', './src/**/*.ts']
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

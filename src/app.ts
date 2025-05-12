@@ -6,12 +6,12 @@ import swaggerSpec from './config/swagger';
 import itemRoutes from './routes/itemRoutes';
 import connectDB from './config/db';
 import { errorHandler } from './middleware/errorHandler';
+import { logMiddleware } from './middleware/logger';
 import dotenv from 'dotenv';
 
-// Importy z projektu kolegi
-import { productsController } from '../my-api-gr-1/src/product/controllers/products.controller';
-import { todosController } from '../my-api-gr-1/src/todo/controllers/todos.controller';
-import { logMiddleware } from '../my-api-gr-1/src/logger/middlewares/logMiddleware';
+// Importy z przeniesionych modułów
+import { productsController } from './product/controllers/products.controller';
+import { todosController } from './todo/controllers/todos.controller';
 
 dotenv.config();
 
@@ -19,7 +19,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(logMiddleware); 
-
 
 const swaggerOptions = {
   definition: {
@@ -36,22 +35,16 @@ const swaggerOptions = {
       }
     ]
   },
-  apis: ['./src/routes/*.ts', '../my-api-gr-1/src/**/*.ts']
+  apis: ['./src/routes/*.ts', './src/**/*.ts']
 };
-
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-
 app.use('/api/items', itemRoutes);
-
-
 app.use('/api/products', productsController);
 app.use('/api/todos', todosController);
 
-
 app.use(errorHandler);
-
 
 const PORT = process.env.PORT || 5001;
 connectDB().then(() => {

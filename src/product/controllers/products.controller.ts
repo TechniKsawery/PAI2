@@ -35,16 +35,16 @@ productsController.get("/:id", async (request, response) => {
 productsController.post(
 	"/",
 	validationMiddleware(CreateProductDTO),
-	async (request, response, next) => {
+	async (request, response) => {
 		try {
 			const productDto = plainToInstance(CreateProductDTO, request.body);
 			const savedProduct = await ProductService.createProduct(productDto);
 
-			response.send({
+			response.status(StatusCodes.CREATED).send({
 				data: savedProduct,
 			});
 		} catch (e) {
 			response.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
 		}
-	},
+	}
 );
