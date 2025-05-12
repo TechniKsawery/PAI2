@@ -1,114 +1,130 @@
-import { RequestHandler, Request, Response, NextFunction } from 'express';
-import { PersonModel } from '../person/models/person.model';
-import { validatePerson, validatePersonMiddleware } from '../validation/personsValidation';
-import { StatusCodes } from 'http-status-codes';
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { UserModel } from '../person/models/person.model';
 
-export const personsController = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-const getAllPersons: RequestHandler = async (req, res, next): Promise<void> => {
+export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const persons = await PersonModel.find();
-    res.status(StatusCodes.OK).json({
-      status: 'success',
-      results: persons.length,
-      data: persons
+    const { email, password, firstName, lastName } = req.body;
+
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+      res.status(400).json({ message: 'Użytkownik z tym emailem już istnieje' });
+      return;
+    }
+
+    const user = new UserModel({
+      email,
+      password,
+      firstName,
+      lastName
+    });
+
+    await user.save();
+
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '24h' });
+
+    res.status(201).json({
+      message: 'Użytkownik został zarejestrowany',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
     });
   } catch (error) {
     next(error);
   }
 };
 
-const getPersonById: RequestHandler = async (req, res, next): Promise<void> => {
+export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const person = await PersonModel.findById(req.params.id);
-    if (!person) {
-      res.status(StatusCodes.NOT_FOUND).json({
-        status: 'error',
-        message: 'Nie znaleziono osoby o podanym ID'
-      });
+    const { email, password } = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      res.status(401).json({ message: 'Nieprawidłowy email lub hasło' });
       return;
     }
-    res.status(StatusCodes.OK).json({
-      status: 'success',
-      data: person
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      res.status(401).json({ message: 'Nieprawidłowy email lub hasło' });
+      return;
+    }
+
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '24h' });
+
+    res.json({
+      message: 'Zalogowano pomyślnie',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
     });
   } catch (error) {
     next(error);
   }
 };
 
-const createPerson: RequestHandler = async (req, res, next): Promise<void> => {
+export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const person = new PersonModel(req.body);
-    const savedPerson = await person.save();
-    res.status(StatusCodes.CREATED).json({
-      status: 'success',
-      data: savedPerson
-    });
-  } catch (error: any) {
-    if (error.code === 11000) {
-      res.status(StatusCodes.CONFLICT).json({
-        status: 'error',
-        message: 'Osoba z podanym emailem już istnieje'
-      });
-    } else {
-      next(error);
+    const user = await UserModel.findById(req.user?.userId).select('-password');
+    if (!user) {
+      res.status(404).json({ message: 'Użytkownik nie znaleziony' });
+      return;
     }
+    res.json(user);
+  } catch (error) {
+    next(error);
   }
 };
 
-const updatePerson: RequestHandler = async (req, res, next): Promise<void> => {
+export const updateMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const person = await PersonModel.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body, updatedAt: new Date() },
-      { new: true, runValidators: true }
-    );
-    if (!person) {
-      res.status(StatusCodes.NOT_FOUND).json({
-        status: 'error',
-        message: 'Nie znaleziono osoby o podanym ID'
-      });
-      return;
-    }
-    res.status(StatusCodes.OK).json({
-      status: 'success',
-      data: person
-    });
-  } catch (error: any) {
-    if (error.code === 11000) {
-      res.status(StatusCodes.CONFLICT).json({
-        status: 'error',
-        message: 'Osoba z podanym emailem już istnieje'
-      });
-    } else {
-      next(error);
-    }
-  }
-};
+    const { firstName, lastName, email } = req.body;
+    const user = await UserModel.findById(req.user?.userId);
 
-const deletePerson: RequestHandler = async (req, res, next): Promise<void> => {
-  try {
-    const person = await PersonModel.findByIdAndDelete(req.params.id);
-    if (!person) {
-      res.status(StatusCodes.NOT_FOUND).json({
-        status: 'error',
-        message: 'Nie znaleziono osoby o podanym ID'
-      });
+    if (!user) {
+      res.status(404).json({ message: 'Użytkownik nie znaleziony' });
       return;
     }
-    res.status(StatusCodes.OK).json({
-      status: 'success',
-      message: 'Osoba została usunięta'
+
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (email) user.email = email;
+
+    await user.save();
+
+    res.json({
+      message: 'Dane użytkownika zaktualizowane',
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
     });
   } catch (error) {
     next(error);
   }
 };
 
-personsController.get("/", getAllPersons);
-personsController.get("/:id", getPersonById);
-personsController.post("/", validatePerson, validatePersonMiddleware, createPerson);
-personsController.put("/:id", validatePerson, validatePersonMiddleware, updatePerson);
-personsController.delete("/:id", deletePerson); 
+export const deleteMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.user?.userId);
+    if (!user) {
+      res.status(404).json({ message: 'Użytkownik nie znaleziony' });
+      return;
+    }
+    res.json({ message: 'Użytkownik został usunięty' });
+  } catch (error) {
+    next(error);
+  }
+}; 

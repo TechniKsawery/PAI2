@@ -20,6 +20,7 @@
   "homepage": "https://github.com/TechniKsawery/PAI2#readme",
   "dependencies": {
     "@types/cors": "^2.8.17",
+    "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -29,6 +30,7 @@
     "express-validator": "^7.2.1",
     "http-status-codes": "^2.3.0",
     "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",

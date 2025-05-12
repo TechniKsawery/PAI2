@@ -1,59 +1,13 @@
 {
     "info": {
         "_postman_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-        "name": "PAI2 API Osób",
-        "description": "Kolekcja do testowania endpointów API osób",
+        "name": "PAI2 API Users",
+        "description": "Kolekcja do testowania endpointów API użytkowników",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
         {
-            "name": "Pobierz Wszystkie Osoby",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{baseUrl}}/api/persons",
-                    "host": [
-                        "{{baseUrl}}"
-                    ],
-                    "path": [
-                        "api",
-                        "persons"
-                    ]
-                },
-                "description": "Pobiera wszystkie osoby z bazy danych"
-            },
-            "response": []
-        },
-        {
-            "name": "Pobierz Osobę po ID",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{baseUrl}}/api/persons/:id",
-                    "host": [
-                        "{{baseUrl}}"
-                    ],
-                    "path": [
-                        "api",
-                        "persons",
-                        ":id"
-                    ],
-                    "variable": [
-                        {
-                            "key": "id",
-                            "value": "",
-                            "description": "ID osoby"
-                        }
-                    ]
-                },
-                "description": "Pobiera konkretną osobę na podstawie jej ID"
-            },
-            "response": []
-        },
-        {
-            "name": "Dodaj Nową Osobę",
+            "name": "Register User",
             "request": {
                 "method": "POST",
                 "header": [
@@ -64,7 +18,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"firstName\": \"Jan\",\n    \"lastName\": \"Kowalski\",\n    \"email\": \"jan.kowalski@example.com\",\n    \"birthDate\": \"1990-01-01\",\n    \"phoneNumber\": \"+48123456789\"\n}",
+                    "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\",\n    \"firstName\": \"Jan\",\n    \"lastName\": \"Kowalski\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -72,23 +26,24 @@
                     }
                 },
                 "url": {
-                    "raw": "{{baseUrl}}/api/persons",
+                    "raw": "{{baseUrl}}/api/users/register",
                     "host": [
                         "{{baseUrl}}"
                     ],
                     "path": [
                         "api",
-                        "persons"
+                        "users",
+                        "register"
                     ]
                 },
-                "description": "Dodaje nową osobę z walidacją danych"
+                "description": "Rejestracja nowego użytkownika"
             },
             "response": []
         },
         {
-            "name": "Aktualizuj Osobę",
+            "name": "Login User",
             "request": {
-                "method": "PUT",
+                "method": "POST",
                 "header": [
                     {
                         "key": "Content-Type",
@@ -97,7 +52,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"firstName\": \"Jan\",\n    \"lastName\": \"Kowalski\",\n    \"email\": \"jan.kowalski@example.com\",\n    \"birthDate\": \"1990-01-01\",\n    \"phoneNumber\": \"+48123456789\"\n}",
+                    "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -105,51 +60,105 @@
                     }
                 },
                 "url": {
-                    "raw": "{{baseUrl}}/api/persons/:id",
+                    "raw": "{{baseUrl}}/api/users/login",
                     "host": [
                         "{{baseUrl}}"
                     ],
                     "path": [
                         "api",
-                        "persons",
-                        ":id"
-                    ],
-                    "variable": [
-                        {
-                            "key": "id",
-                            "value": "",
-                            "description": "ID osoby"
-                        }
+                        "users",
+                        "login"
                     ]
                 },
-                "description": "Aktualizuje dane osoby na podstawie ID"
+                "description": "Logowanie użytkownika"
             },
             "response": []
         },
         {
-            "name": "Usuń Osobę",
+            "name": "Get Current User",
             "request": {
-                "method": "DELETE",
-                "header": [],
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
                 "url": {
-                    "raw": "{{baseUrl}}/api/persons/:id",
+                    "raw": "{{baseUrl}}/api/users/me",
                     "host": [
                         "{{baseUrl}}"
                     ],
                     "path": [
                         "api",
-                        "persons",
-                        ":id"
-                    ],
-                    "variable": [
-                        {
-                            "key": "id",
-                            "value": "",
-                            "description": "ID osoby"
-                        }
+                        "users",
+                        "me"
                     ]
                 },
-                "description": "Usuwa osobę na podstawie ID"
+                "description": "Pobieranie danych zalogowanego użytkownika"
+            },
+            "response": []
+        },
+        {
+            "name": "Update Current User",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"firstName\": \"Jan\",\n    \"lastName\": \"Kowalski\",\n    \"email\": \"jan.kowalski@example.com\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/users/me",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "users",
+                        "me"
+                    ]
+                },
+                "description": "Aktualizacja danych zalogowanego użytkownika"
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Current User",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/api/users/me",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "users",
+                        "me"
+                    ]
+                },
+                "description": "Usunięcie konta zalogowanego użytkownika"
             },
             "response": []
         }
@@ -178,6 +187,11 @@
         {
             "key": "baseUrl",
             "value": "http://localhost:5001",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
             "type": "string"
         }
     ]

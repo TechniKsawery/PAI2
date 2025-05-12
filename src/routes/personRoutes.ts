@@ -1,25 +1,20 @@
 import { Router } from 'express';
-import { validatePerson } from '../validation/personsValidation';
-import { validatePersonMiddleware } from '../validation/personsValidation';
+import { authMiddleware } from '../middleware/authMiddleware';
 import {
-  createPerson,
-  getPersons,
-  getPerson,
-  updatePerson,
-  deletePerson
-} from '../controllers/personController';
+  register,
+  login,
+  getMe,
+  updateMe,
+  deleteMe
+} from '../controllers/personsController';
 
 const router = Router();
 
-router
-  .route('/')
-  .get(getPersons)
-  .post(validatePerson, validatePersonMiddleware, createPerson);
+router.post('/register', register);
+router.post('/login', login);
 
-router
-  .route('/:id')
-  .get(getPerson)
-  .put(validatePerson, validatePersonMiddleware, updatePerson)
-  .delete(deletePerson);
+router.get('/me', getMe);
+router.put('/me', updateMe);
+router.delete('/me', deleteMe);
 
 export default router; 

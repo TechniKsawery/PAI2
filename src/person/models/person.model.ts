@@ -1,16 +1,28 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
-export interface IPerson extends mongoose.Document {
+export interface IUser extends mongoose.Document {
+  email: string;
+  password: string;
   firstName: string;
   lastName: string;
-  email: string;
-  birthDate?: Date;
-  phoneNumber?: string;
   createdAt: Date;
   updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const personSchema = new mongoose.Schema<IPerson>({
+const userSchema = new mongoose.Schema<IUser>({
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Nieprawidłowy format email']
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6
+  },
   firstName: { 
     type: String, 
     required: true, 
@@ -22,19 +34,6 @@ const personSchema = new mongoose.Schema<IPerson>({
     required: true, 
     minLength: 2, 
     maxLength: 50 
-  },
-  email: { 
-    type: String, 
-    required: true, 
-    unique: true,
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Nieprawidłowy format email']
-  },
-  birthDate: { 
-    type: Date 
-  },
-  phoneNumber: { 
-    type: String,
-    match: [/^\+?[0-9]{9,15}$/, 'Nieprawidłowy format numeru telefonu']
   },
   createdAt: { 
     type: Date, 
@@ -48,4 +47,20 @@ const personSchema = new mongoose.Schema<IPerson>({
   }
 });
 
-export const PersonModel = mongoose.model<IPerson>("Person", personSchema); 
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error: any) {
+    next(error);
+  }
+});
+
+userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+export const UserModel = mongoose.model<IUser>("User", userSchema); 
