@@ -41,7 +41,7 @@ const swaggerOptions = {
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/items', itemRoutes);
-app.use('/api/persons', personsController);
+app.use('/api/users', personsController);
 app.use('/api/todos', todosController);
 
 app.use(errorHandler);

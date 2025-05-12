@@ -1,8 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../person/models/person.model';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+export const personsController = Router();
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -127,4 +130,11 @@ export const deleteMe = async (req: Request, res: Response, next: NextFunction):
   } catch (error) {
     next(error);
   }
-}; 
+};
+
+
+personsController.post('/register', register);
+personsController.post('/login', login);
+personsController.get('/me', getMe);
+personsController.put('/me', updateMe);
+personsController.delete('/me', deleteMe); 
